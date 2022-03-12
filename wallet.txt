@@ -1,0 +1,1657 @@
+; -*- ledger -*-
+; This line instructs vim-ledger to enable the filetype
+; vim:filetype=ledger
+;
+; Display current balance in CHF
+; $ ledger -X CHF -f wallet.dat b
+;
+; Display IB transactions
+; $ ledger -f wallet.dat r IB
+; Prepare a new journal for new year
+; $ ledger -f wallet.dat equity > new-wallet.dat
+; $ ledger -f wallet.dat pricedb > prices.dat
+; # Merge files: check out the previous opening transactions to see how it should be done.
+
+; Last checks:
+;   IB          2022-03-07
+;   gpayslip    2022-02-26
+;   BCGE CC     2022-02-23
+;   Degiro      2022-02-19 update once every 2 months
+;   Revolut:EUR 2022-02-19 update once per quarter
+;   Revolut:USD 2022-02-19
+;   BCGE        2022-02-19
+;   Finpension  2022-01-23 update once per quarter
+;   A:Debts     2022-01-23 update once per quarter
+;   Splitwise   2022-01-23 update once per quarter
+;   Forex       2022-01-23 update once per 4 months
+;   Revolut:CHF 2022-01-23 update once per quarter
+;   Cash:PLN    2022-01-23 update once per quarter
+;   Cash:CHF    2022-01-23 update once per quarter
+;   Revolut:PLN 2022-01-03 update once per quarter
+;   AXA         2022-01-01 update once per 4 months
+;   mBank       2021-12-31 update once per quarter
+;   CS          2021-12-31 update once per quarter
+;   Cash Other  never
+
+; # Securities
+;
+; 1. I keep track on the number of owned securites. A separate account for each security, e.g. Asset:Investments:CATEGORY:SECNAME
+; 2. Make an account note containing the ISIN and Valorennummer of the security at the beginning of the wallet.
+;
+; Swiss tax declaration requires declaring owned securities. It works best together with their Valorennummer from [Kurslisten Direkte Bundessteuer](https://www.ictax.admin.ch/extern/de.html#/ratelist/2020) as then the tax declaration software helps calculate EOY prices as well as dividend tax.
+
+account Assets
+  note The asset category represents the monetizable assets that I own. It can contain cash, financial instruments, debts, sellable properties. It shouldn't contain liabilities or potential assets that I might receive when a condition is met, e.g., unvested GSUs.
+
+account Assets:Cash
+  note Physical Cash
+
+account Assets:Liquid
+  note Cash equivalent money that is not physical
+
+account Assets:Investments
+  note A category of Weltportfolio stock assets that appreciate in value and are part of my retirement plan.
+
+account Assets:Investments:Degiro:IWDA
+  note IE00B4L5Y983
+
+account Assets:Investments:Finpension
+  note My 3a fillar that invests 100% into stocks. I update its value against Equity:Finpension Change
+
+account Assets:Properties
+  note A category of assets that are large, tangible, potentially resellable things, e.g., vehicles, real estate. To avoid busy work and polluting reports, I track only items that are worth more than 100 CHF here.
+
+account Income:Capital Gains
+  note Not taxable capital gains.
+
+account Expenses:Krankenversicherung
+  note The tax deductible expenses for my health insurance
+
+account Expenses:Transport:Commute
+  note The tax deductible expenses for public transport abos ("Fahrkosten zwischen Wohn- und Arbeitsort").
+
+account Expenses:Charity
+  note The tax deductible expenses for charity ("Zuwendungen / Spenden an gemeinnützige Institutionen").
+
+account Equity:Charles Schwab:Unvested GOOG
+  note An asset representing unvested GOOG stock from Google. I keep track of it, because I need to provide this in the tax declaration.
+
+account Equity:Berufsausbildung
+  note A pseudoaccount for the amount of tax deductible expenses for Berufsausbildung.
+
+account State
+  note The account for counting mandatory state related expenses such as taxes or social security contrbutions grouped by year.
+
+account State:2021:IB Withholding Tax
+  note A pseudoasset representing the tax at source taken by IB. I will use the accumulated amount to fill out the DA-1 form and "pay" for some of the tax obligations.
+
+; https://www.freeformatter.com/poland-standards-code-snippets.html
+commodity PLN
+  format 1,000.00 PLN
+
+commodity CHF
+  format CHF 1,000.00
+
+commodity USD
+  format USD 1,000.00
+
+commodity EUR
+  format EUR 1,000.00
+
+P 2019/04/22 CHF 6.52 HRK
+P 2019/04/22 CHF SEK 9.16
+P 2019/04/22 CHF UAH 1
+P 2021/03/02 CHF GBP 0.81
+P 2021-12-30 USD 0.917038 CHF
+P 2021-12-30 USD 0.883621 EUR
+P 2021-12-30 USD 4.059225 PLN
+
+P 2021/08/02 "CH0033782431" CHF 1,644.10
+P 2021/08/02 "CH0110869143" CHF 2,856.94
+P 2021/08/02 "CH0214967314" CHF 2,196.04
+P 2021/08/02 "CH0017844686" CHF 2,049.62
+P 2021/08/02 "CH0429081620" CHF 1,406.30
+P 2021-12-31 IWDA 78.91 EUR
+P 2021-12-31 VT 107.65 USD
+P 2021-12-31 VXUS 63.76 USD
+P 2021-12-31 GOOG 2913.02 USD
+
+P 2021/12/31 "Vero4K+" GBP 107.10
+P 2021/12/31 "Samsung HW-A450" 300 CHF
+P 2021/12/31 "Samsung Galaxy Tab S6 Lite" CHF 299.00
+P 2021/12/31 "Onyx Boox Note Air" CHF 433.00
+P 2021/12/31 "Kinu M47" 350 CHF
+P 2021/12/31 "ASUS ZenWiFi CT8" 150 CHF
+P 2021/12/31 Contini CHF 500.00
+P 2021/12/31 "Google Home Max" CHF 250.00
+P 2021/12/31 "RØDE NT-USB" CHF 140.00
+P 2021/12/31 Ektorp CHF 699.00
+P 2021/12/31 "Elgato Key Light" CHF 195
+P 2021/12/31 "Nintendo Switch" CHF 250.00
+P 2021/12/31 "Steelcase Gesture" CHF 1,000.00
+P 2021/12/31 "AMD Ryzen 5 5600X" CHF 290.00
+; https://www.motoscout24.ch/de/motorraeder/bmw--f-800?yearfrom=2015&cond=272%2C49%2C50&yearto=2015&make=9&model=2471
+P 2021/12/31 "BMWF800R"                            CHF 5,900.00
+P 2021/12/31 "Lelit Bianca" CHF 1900
+P 2021/12/31 "Stadler Form Albert" CHF 424.00
+P 2021/12/31 "Pixel 6 Pro" 899.00 EUR
+P 2021/12/31 "Sony WF-1000XM4" CHF 244
+
+2021/12/31 * Opening Balances
+    Assets:Cash                            GBP 40.00
+    Assets:Cash                           130.00 HRK
+    Assets:Cash:CHF                        CHF 10.00
+    Assets:Cash:CHF:Cold Storage        CHF 1,554.00
+    Assets:Cash:CHF:Wallet                 CHF 55.60
+    Assets:Cash:EUR                        65.03 EUR
+    Assets:Cash:PLN                       289.00 PLN
+    Assets:Cash:USD                       USD 181.89
+    Assets:Debts:Ecco                     CHF 106.95
+    Assets:Debts:Filip Kowalski            CHF 71.25
+    Assets:Debts:Google Hallpass          CHF 384.00
+    Assets:Debts:Jan Kwaśniak             CHF 803.77
+    Assets:Debts:Mike                      CHF 71.25
+    Assets:Debts:Zalando                  CHF 264
+    Assets:Debts:Zalando                  CHF 96
+    Assets:Illiquid:AXA Wintherthur Pension Fund  CHF 152,595.00
+    Assets:Illiquid:ZKB Expected        CHF 2,323.00
+    Assets:Investments:Degiro:IWDA       3284.0 IWDA
+    Assets:Investments:Finpension:1:CH Large Cap  "CH0033782431" 0.090
+    Assets:Investments:Finpension:1:CH Small & Mid Cap  "CH0110869143" 0.054
+    Assets:Investments:Finpension:1:World ex CH  "CH0429081620" 3.624
+    Assets:Investments:Finpension:1:World ex CH Small Cap  "CH0017844686" 0.381
+    Assets:Investments:Finpension:1:Emerging Markets  "CH0214967314" 0.527
+    Assets:Investments:Finpension:1:Cash     CHF 84.75
+    Assets:Investments:IB:VT               8525 VT
+    Assets:Investments:IB:VXUS             1800 VXUS
+    Assets:Liquid:BCGE                  CHF 40733.12
+    Assets:Liquid:BCGE CC               CHF -1,744.60
+    Assets:Liquid:Degiro                  CHF 245.75
+    Assets:Liquid:Degiro                   -0.01 EUR
+    Assets:Liquid:Degiro:Acrued Compensation    CHF 5.15
+    Assets:Liquid:IB:CHF                CHF 7534.04
+    Assets:Liquid:IB:PLN                2.85 PLN
+    Assets:Liquid:IB:USD                USD 12553.65
+    Assets:Liquid:Revolut:CHF             CHF 142.81
+    Assets:Liquid:Revolut:PLN               5.00 PLN
+    Assets:Liquid:Revolut:USD              USD 51.95
+    Assets:Liquid:Revolut:EUR              EUR 0 = EUR 0
+    Assets:Liquid:mBank                  8379.21 PLN
+    Assets:Properties                   1 "AMD Ryzen 5 5600X"
+    Assets:Properties                   1 "ASUS ZenWiFi CT8"
+    Assets:Properties                   1 "BMWF800R"
+    Assets:Properties                      1 Contini
+    Assets:Properties                       1 Ektorp
+    Assets:Properties                   2 "Elgato Key Light"
+    Assets:Properties                   1 "Google Home Max"
+    Assets:Properties                   1 "Kinu M47"
+    Assets:Properties                   1 "Lelit Bianca"
+    Assets:Properties                   1 "Nintendo Switch"
+    Assets:Properties                   1 "Onyx Boox Note Air"
+    Assets:Properties                   1 "Pixel 6 Pro"
+    Assets:Properties                   1 "RØDE NT-USB"
+    Assets:Properties                   1 "Samsung Galaxy Tab S6 Lite"
+    Assets:Properties                   1 "Samsung HW-A450"
+    Assets:Properties                   1 "Sony WF-1000XM4"
+    Assets:Properties                   1 "Stadler Form Albert"
+    Assets:Properties                   1 "Steelcase Gesture"
+    Assets:Properties                   1 "Vero4K+"
+    Assets:Properties                   1 "Vampire Hunter Manga"
+    Assets:Properties                   1 "Knirps T.400"
+    Equity:Opening Balances
+
+2021/12/31 * Unvested GOOG Opening Balances
+    Equity:Charles Schwab:Unvested GOOG  67.000 GOOG
+    Equity:Charles Schwab:Unvested GOOG Withholding Tax  -22.33 GOOG
+    Equity:GOOG Grant Opening Balances
+
+2021/12/31 * State Opening Balances
+    State:2020:IB Withholding Tax       CHF 1,403
+    State:2021:IB Withholding Tax:VT    USD 1,168.36
+    State:2021:IB Withholding Tax:VXUS    USD 492.07
+    State:2021:Withholding Tax:Total    CHF 58,154.00
+    Equity:State Opening Balances
+
+2021-12-31 * Saldo der Abschlussbuchungen
+    Assets:Liquid:BCGE       CHF -2.00
+    Expenses:Other            CHF 2.00
+
+2021-12-31 * HELLOFRESH*204944719, Zurich
+    Assets:Liquid:BCGE CC     CHF -116.90
+    Expenses:Groceries:Hello Fresh             CHF 116.90
+
+2022/01/01 * AXA Update
+    Assets:Illiquid:AXA Wintherthur Pension Fund  = 157541.65 CHF
+    Income:Google
+
+2022/01/01 * Zalando return
+    Assets:Liquid:BCGE CC  CHF 264
+    Assets:Liquid:BCGE CC  CHF 96
+    Assets:Debts:Zalando    = 0 CHF
+
+2022/01/01 * Kiosk
+    Assets:Liquid:BCGE CC              CHF -1.85
+    Expenses:Groceries:Chewing Gum     CHF 1.85
+
+2022-01-01 * Patreon* Membership
+    Assets:Liquid:Revolut:USD      USD -33.00 = USD 18.95
+    Expenses:Leisure:Patreon
+
+2022/01/03 * Finpension 3a
+    Assets:Liquid:BCGE                      -6883 CHF
+    Assets:Investments:Finpension:2:Cash     CHF 6883.00
+
+2022-01-03 * Coop
+    Assets:Liquid:BCGE CC             CHF -26.45
+    Expenses:Haushalt                     CHF 8.45
+    Expenses:Groceries:Chewing Gum        CHF 4.95
+    Expenses:Groceries
+    Assets:Debts:Jan Kwaśniak  CHF 10.10
+
+2022-01-03 * Coop
+    Assets:Liquid:BCGE CC     CHF -3.60
+    Expenses:Groceries           CHF 1.80
+    Assets:Debts:Jan Kwaśniak  CHF 1.80
+
+2022/01/03 * Uber Eats
+    Assets:Liquid:BCGE CC     CHF -29.50
+    Expenses:Take Away
+
+2022-01-04 * Finpension Purchase/Sell
+    Assets:Investments:Finpension:2:Cash                                CHF -137.81313 = CHF 6745.18687
+    Assets:Investments:Finpension:2:CH Large Cap    "CH0033782431" 0.079 @ CHF 1744.47
+    Assets:Investments:Finpension:2:Cash                                      CHF -138.35088 = CHF 6606.83599
+    Assets:Investments:Finpension:2:CH Small & Mid Cap    "CH0110869143" 0.048 @ CHF 2882.31
+    Assets:Investments:Finpension:2:Cash                                           CHF -683.991 = CHF 5922.84499
+    Assets:Investments:Finpension:2:World ex CH Small Cap    "CH0214967314" 0.329 @ CHF 2079.00
+    Assets:Investments:Finpension:2:Cash                              CHF -4776.63377 = CHF 1146.21122
+    Assets:Investments:Finpension:2:World ex CH    "CH0429081620" 3.217 @ CHF 1484.81
+    Assets:Investments:Finpension:2:Cash                                   CHF -1034.30835 = CHF 111.90287
+    Assets:Investments:Finpension:2:Emerging Markets    "CH0017844686" 0.489 @ CHF 2115.15
+
+2022-01-04 * Ecco
+    Assets:Debts:Ecco                     CHF -106.95 = 0 CHF
+    Assets:Liquid:BCGE CC
+
+2022-01-04 * Coop
+    Assets:Liquid:BCGE CC     CHF -3.95
+    Expenses:Groceries
+    Assets:Debts:Jan Kwaśniak  CHF 1.97
+
+2022-01-04 * Vampire Hunter
+    Assets:Liquid:BCGE     CHF -5.95
+    Assets:Liquid:BCGE     CHF 8
+    Assets:Properties        -1 "Vampire Hunter Manga"
+
+2022-01-04 * VT trade
+    Assets:Investments:IB:VT               VT 5
+    Assets:Liquid:IB:USD            USD -540.88
+    Assets:Liquid:IB:USD              USD -1.00
+    Expenses:Financial Services        USD 1.00
+
+2022-01-04 * VT trade
+    Assets:Investments:IB:VT              VT 60
+    Assets:Liquid:IB:USD           USD -6490.20
+    Assets:Liquid:IB:USD              USD -1.00
+    Expenses:Financial Services        USD 1.00
+
+2022-01-04 * VT trade
+    Assets:Investments:IB:VT              VT 60
+    Assets:Liquid:IB:USD           USD -6489.30
+    Assets:Liquid:IB:USD              USD -1.00
+    Expenses:Financial Services        USD 1.00
+
+2022-01-04 * VXUS trade
+    Assets:Investments:IB:VXUS        VXUS -100
+    Assets:Liquid:IB:USD            USD 6412.20
+    Assets:Liquid:IB:USD              USD -1.04
+    Expenses:Financial Services        USD 1.04
+
+2022-01-04 * VXUS trade
+    Assets:Investments:IB:VXUS        VXUS -100
+    Assets:Liquid:IB:USD            USD 6411.20
+    Assets:Liquid:IB:USD              USD -1.04
+    Expenses:Financial Services        USD 1.04
+
+2022-01-04 * CHF.PLN
+    Assets:Liquid:IB:CHF           CHF 0.65 @ PLN 4.41
+    Assets:Liquid:IB:PLN                        PLN -2.85
+    Assets:Liquid:IB:CHF                                0
+    Expenses:Financial Services                        -0.02 PLN
+
+2022-01-06 * Audible Gmbh*NY8WJ6Q45, audible.de/rg
+    Assets:Liquid:BCGE CC      CHF -10.70
+    Expenses:Leisure:Audible
+
+2022-01-06 * Coop
+    Assets:Liquid:BCGE CC             CHF -12.65
+    Expenses:Groceries                   CHF 11.15
+    Expenses:Groceries:Chewing Gum        CHF 1.50
+
+2022-01-07 * HELLOFRESH, Zurich
+    Assets:Liquid:BCGE CC      CHF -81.90
+    Expenses:Groceries:Hello Fresh              CHF 81.90
+
+2022-01-07 * Coop
+    Assets:Liquid:BCGE CC              CHF -2.80
+    Expenses:Groceries                    CHF 1.30
+    Expenses:Groceries:Chewing Gum        CHF 1.50
+
+2022-01-07 * EASYJETK2TV8ZQ, WWW.EASYJET.C
+    Assets:Liquid:BCGE CC           CHF -186.75
+    Expenses:Financial Services        CHF 3.20
+    Expenses:Travel                   CHF 183.55
+
+2022-01-08 * Coop
+    Assets:Liquid:BCGE CC              CHF -15.60
+    Expenses:Groceries
+    Assets:Debts:Jan Kwaśniak  CHF 1.50
+
+2022-01-08 * Coop
+    Assets:Liquid:BCGE CC    CHF -15.55
+    Expenses:Groceries
+    Assets:Debts:Jan Kwaśniak  CHF 1.97 ; Butter
+
+2022-01-08 * Galaxus
+    Assets:Liquid:BCGE CC    CHF -58.80
+    Expenses:Other  CHF 39.30 ; Crocs Classic (42, 43)
+    Expenses:Other  ; Placide Atemschutzmasken (FFP2, 20 x)
+    Assets:Debts:Jan Kwaśniak  CHF   9.75
+
+2022-01-10 * Coop
+    Assets:Liquid:BCGE CC              CHF -4.40
+    Expenses:Groceries                    CHF 2.90
+    Expenses:Groceries:Chewing Gum        CHF 1.50
+
+2022-01-10 * Coop
+    Assets:Liquid:BCGE CC        CHF -20.85
+    Expenses:Groceries              CHF 11.90
+    Assets:Debts:Jan Kwaśniak     CHF 11.90
+    Expenses:Other                  CHF -2.95
+
+2022-01-10 * Mucho Mobile, Carouge
+    Assets:Liquid:BCGE CC       CHF -9.90
+    Expenses:Handy               CHF 9.90
+
+2022/01/10 * Ricardo
+    * Assets:Liquid:BCGE     CHF 17
+    Assets:Liquid:BCGE CC  CHF -5.95
+    * Expenses:Other  CHF 5.95 ; Postage
+    * Assets:Properties   -1 "Knirps T.400"
+    * Assets:Debts:Ricardo  CHF -0.90
+
+2022/01/10 * Uber Eats
+    Assets:Debts:Jan Kwaśniak  CHF -18
+    Expenses:Take Away
+
+2022-01-10 * VT trade
+    Assets:Investments:IB:VT              VT 100
+    Assets:Liquid:IB:USD           USD -10429.00
+    Assets:Liquid:IB:USD               USD -1.00
+    Expenses:Financial Services         USD 1.00
+
+2022-01-10 * VT trade
+    Assets:Investments:IB:VT              VT 60
+    Assets:Liquid:IB:USD           USD -6257.10
+    Assets:Liquid:IB:USD              USD -1.00
+    Expenses:Financial Services        USD 1.00
+
+2022-01-10 * VXUS trade
+    Assets:Investments:IB:VXUS        VXUS -100
+    Assets:Liquid:IB:USD            USD 6269.05
+    Assets:Liquid:IB:USD              USD -1.04
+    Expenses:Financial Services        USD 1.04
+
+2022-01-11 * Coop
+    Assets:Liquid:BCGE CC              CHF -1.50
+    Expenses:Groceries:Chewing Gum        CHF 1.50
+
+2022-01-11 * Szenario Hair Design, Pfäffikon SZ
+    Assets:Liquid:BCGE CC      CHF -71.00
+    Expenses:Other              CHF 71.00
+
+2022-01-12 * Coop
+    Assets:Liquid:BCGE CC              CHF -2.60
+    Expenses:Groceries                    CHF 1.10
+    Expenses:Groceries:Chewing Gum        CHF 1.50
+
+2022-01-13 * Coop
+    Assets:Liquid:BCGE CC             CHF -14.90
+    Expenses:Groceries                    CHF 2.47
+    Expenses:Haushalt                     CHF 4.23
+    Expenses:Groceries:Chewing Gum        CHF 1.50
+    Assets:Debts:Jan Kwaśniak           CHF 6.70
+
+2022-01-13 * IB Status
+    Assets:Liquid:IB:CHF                     0 = CHF 7534.69
+    Assets:Liquid:IB:PLN                     0 = PLN 0.00
+    Assets:Liquid:IB:USD                USD -0.01 = USD 1431.49
+    Assets:Investments:IB:VT                 0 = VT 8810
+    Assets:Investments:IB:VXUS               0 = VXUS 1500
+    Expenses:Other  USD 0.01
+
+2022-01-13 * Twint KALVODA, PAVEL, +41754182502 0400000564777838
+    Assets:Liquid:BCGE       CHF 20.00
+    Expenses:Other          CHF -20.00
+
+P 2022-01-13 VT 106.13 USD
+P 2022-01-13 VXUS 64.14 USD
+
+P 2022-01-13 USD 0.910165 CHF
+P 2022-01-13 USD 0.872182 EUR
+P 2022-01-13 USD 3.960238 PLN
+
+2022-01-14 * Exchanged to EUR
+    Assets:Liquid:Revolut:CHF     CHF -142.81 = CHF 0.00
+    Assets:Liquid:Revolut:EUR      EUR 136.92 = EUR 136.92
+
+2022/01/14 * Revolut Top Up
+    Assets:Liquid:Revolut:CHF                 600 CHF = 600 CHF
+    Assets:Liquid:BCGE
+
+2022-01-14 * Coop
+    Expenses:Other                       CHF -2.30
+    Assets:Liquid:BCGE CC             CHF -17.20
+    Expenses:Groceries                    CHF 9.56
+    Expenses:Groceries:Chewing Gum        CHF 1.50
+    Assets:Debts:Jan Kwaśniak           CHF 8.44
+
+2022-01-14 * Coop
+    Expenses:Other                  CHF -0.15
+    Assets:Liquid:BCGE CC        CHF -56.00
+    Expenses:Groceries              CHF 39.07
+    Expenses:Haushalt                CHF 7.48
+    Expenses:Gesundheit              CHF 1.80
+    Assets:Debts:Jan Kwaśniak      CHF 7.80
+
+2022-01-14 * Audible Gmbh*JW91V6EP5, audible.de/rg
+    Assets:Liquid:BCGE CC             CHF -4.25
+    Expenses:Financial Services        CHF 0.05
+    Expenses:Leisure:Audible
+
+2022/01/14 * ZKB Deposit Update
+    Assets:Illiquid:ZKB Expected        CHF -0.40 = 2322.60 CHF
+    Expenses:Other
+
+2022-01-14 * Mucho Mobile, Carouge
+    Assets:Liquid:BCGE CC      CHF -20.00
+    Expenses:Handy              CHF 20.00
+
+2022-01-14 * AMZNDigital*H490T55H5, 4.4-2012E+11
+    Assets:Liquid:BCGE CC             CHF -9.60
+    Expenses:Financial Services        CHF 0.15
+    Expenses:Other                     CHF 9.45
+
+2022/01/14 * Uber Eats
+    Assets:Liquid:BCGE CC  CHF -28.50
+    Expenses:Take Away
+
+2022-01-14 * Patreon* Membership
+    Assets:Liquid:Revolut:USD       USD -3.00 = USD 15.95
+    Expenses:Leisure
+
+2022-01-15 * Exchanged to EUR
+    Assets:Liquid:Revolut:CHF     CHF -600.00 = CHF 0.00
+    Assets:Liquid:Revolut:EUR      EUR 568.87 = EUR 705.79
+    Expenses:Financial Services  EUR 5.75
+
+2022-01-15 * Main Shop
+    Assets:Liquid:Revolut:EUR      EUR -17.60 = EUR 688.19
+    Expenses:Other  ; Absolut Citron für Jurek
+
+2022-01-15 * Balemuldaltys
+    Assets:Liquid:Revolut:EUR       EUR -3.11 = EUR 685.08
+    Expenses:Other  ; Wasser
+
+2022-01-15 * Coop
+    Expenses:Other                       CHF -0.60
+    Assets:Liquid:BCGE CC              CHF -0.90
+    Expenses:Groceries:Chewing Gum        CHF 1.50
+
+2022-01-16 * BASEFIT.CH AG, VOLKETSWIL
+    Assets:Liquid:BCGE CC      CHF -39.00
+    Expenses:Other              CHF 39.00
+
+2022-01-16 * Global Salcai Iii
+    Assets:Liquid:Revolut:EUR       EUR -2.30 = EUR 682.78
+    Expenses:Other
+
+2022-01-16 * Mojito
+    Assets:Debts:Maciej  EUR -5.00
+    Expenses:Other
+
+2022-01-17 * Google Osmand, Mountain View
+    Assets:Liquid:BCGE CC      CHF -25.00
+    Expenses:Other              CHF 25.00
+
+2022-01-17 * Bar Nuevo Iris
+    Assets:Liquid:Revolut:EUR      EUR -21.30 = EUR 661.48
+    Assets:Debts:Maciej  EUR 7.10
+    Assets:Debts:Adam Świeżowski  EUR 7.10
+    Expenses:Other
+
+2022-01-17 * Vegueta
+    Assets:Debts:Adam Świeżowski  EUR -11.03
+    Expenses:Other
+
+2022-01-17 * Global Salcai Ii
+    Assets:Liquid:Revolut:EUR       EUR -2.30 = EUR 659.18
+    Expenses:Other
+
+2022/01/17 * Revolut Top Up
+    Assets:Liquid:Revolut:CHF                 400 CHF
+    Assets:Liquid:BCGE
+
+2022-01-17 * Twint SBB Mobile 0400000566525093
+    Assets:Liquid:BCGE      CHF -20.00
+    Expenses:Other           CHF 20.00
+
+2022-01-18 * Audible Gmbh*CI9NT4JP5, audible.de/rg
+    Assets:Liquid:BCGE CC       CHF -4.25
+    Expenses:Leisure:Audible               CHF 4.25
+
+2022-01-18 * AMZNDigital*JR1NN19O5, 4.4-2012E+11
+    Assets:Liquid:BCGE CC             CHF -8.65
+    Expenses:Financial Services        CHF 0.15
+    Expenses:Other                     CHF 8.50
+
+2022-01-19 * Vegueta
+    Assets:Debts:Adam Świeżowski  EUR -13.75
+    Expenses:Other
+
+2022-01-19 * Viatortripadvisor Uk
+    Assets:Liquid:Revolut:EUR     EUR -240.00 = EUR 419.18
+    Assets:Debts:Maciej  EUR 60
+    Assets:Debts:Adam Świeżowski  EUR 60
+    Assets:Debts:Zuzanna Świeżowska  EUR 60
+    Expenses:Other
+
+2022-01-19 * Destilerias Arehucas S
+    Assets:Liquid:Revolut:EUR      EUR -17.10 = EUR 402.08
+    Expenses:Other
+
+2022-01-19 * Macrofit Los Alisios
+    Assets:Liquid:Revolut:EUR       EUR -7.00 = EUR 395.08
+    Expenses:Other
+
+2022-01-20 * GOOGLE *YouTubePremium, g.co/helppay#
+    Assets:Liquid:BCGE CC      CHF -15.90
+    Expenses:Leisure:Youtube              CHF 15.90
+
+2022-01-20 * Restaurante Parque Rom
+    Assets:Liquid:Revolut:EUR     EUR -100.00 = EUR 295.08
+    Assets:Debts:Maciej  EUR 50
+    Expenses:Other
+
+2022-01-21 * Exchanged to EUR
+    Assets:Liquid:Revolut:CHF     CHF -400.00 = CHF 0.00
+    Assets:Liquid:Revolut:EUR      EUR 386.62 = EUR 681.70
+
+2022-01-21 * To Jerzy Jaroszynski
+    Assets:Liquid:Revolut:EUR     EUR -245.00 = EUR 436.70
+    Expenses:Travel
+
+2022-01-21 * Heladeria Il Bacio
+    Assets:Liquid:Revolut:EUR      EUR -14.00 = EUR 422.70
+    Assets:Debts:Maciej  EUR 4.66
+    Assets:Debts:Zuzanna Świeżowska  EUR 4.67
+    Expenses:Other
+
+2022-01-21 * HELLOFRESH*202362119, Zurich
+    Assets:Liquid:BCGE CC     CHF -116.90
+    Expenses:Groceries:Hello Fresh             CHF 116.90
+
+2022-01-21 * BCGE CC Status
+    Assets:Liquid:BCGE CC               = CHF -2207.70
+    Expenses:Other  CHF -114.20
+
+2022-01-21 * IB Status
+    Assets:Liquid:IB:CHF                     0 = CHF 7534.69
+    Assets:Liquid:IB:PLN                     0 = PLN 0.00
+    Assets:Liquid:IB:USD                     0 = USD 1431.49
+    Assets:Investments:IB:VT                 0 = VT 8810
+    Assets:Investments:IB:VXUS               0 = VXUS 1500
+
+P 2022-01-21 VT 101.11 USD
+P 2022-01-21 VXUS 62.09 USD
+
+2022-01-22 * Tapas
+    Assets:Debts:Adam Świeżowski  EUR -20
+    Expenses:Other
+
+2022-01-22 * Canaryfauna
+    Assets:Liquid:Revolut:EUR       EUR -9.90 = EUR 412.80
+    Expenses:Other
+
+2022-01-22 * Delikia Apto Gran Cana
+    Assets:Liquid:Revolut:EUR       EUR -2.50 = EUR 410.30
+    Expenses:Other
+
+2022-01-22 * Aerop Gran Canaria Int
+    Assets:Liquid:Revolut:EUR       EUR -1.45 = EUR 408.85
+    Expenses:Other
+
+2022-01-22 * Excursiones Canarias
+    Assets:Liquid:Revolut:EUR       EUR -5.00 = EUR 403.85
+    Assets:Debts:Maciej  EUR 2.50
+    Expenses:Other
+
+2022-01-23 * UBER *EATS, HELP.UBER.COM
+    Assets:Liquid:BCGE CC  CHF -28.50
+    Expenses:Take Away
+
+2022/01/23 * Accounting
+  Assets:Cash:CHF:Cold Storage           = 1554.60 CHF
+  Assets:Cash:CHF:Wallet           -0.60 CHF        = 55.00 CHF
+
+2022/01/23 * Splitwise Check
+    Assets:Debts:Mike  0 CHF = 71.25 CHF
+    Assets:Debts:Filip Kowalski  0 CHF = 71.25 CHF
+    Assets:Debts:Jan Kwaśniak  -0.32 CHF = 847.38 CHF
+    Assets:Debts:Adam Świeżowski  125.23 EUR = EUR 147.55
+    Assets:Debts:Maciej  -85.22 EUR = EUR 34.04
+    Assets:Debts:Zuzanna Świeżowska  = EUR 24.66
+    Assets:Debts:Ricardo  0 CHF = CHF -0.90
+    Expenses:Other  CHF 0.32
+
+2022/01/23 * Degiro Status
+    Assets:Liquid:Degiro                         = CHF 245.29
+    Assets:Liquid:Degiro                         0.01 EUR = EUR 0
+    Assets:Investments:Degiro:IWDA               0 = IWDA 3284
+    Expenses:Other  CHF 0.46
+    Expenses:Other  EUR -0.01
+
+2022-01-23 * BCGE Status
+    Assets:Liquid:BCGE                CHF 40 = CHF 32907.17
+    Expenses:Other
+
+P 2022-01-23 USD 0.91171 CHF
+P 2022-01-23 USD 0.88127 EUR
+P 2022-01-23 USD 3.99408 PLN
+P 2022-01-23 IWDA 74.805 EUR
+
+2022-01-24 * From Adam Świeżowski
+    Assets:Liquid:Revolut:EUR      EUR 172.21 = EUR 576.06
+    Assets:Debts:Adam Świeżowski
+
+2022-01-24 * Coop
+    Assets:Liquid:Revolut:EUR      EUR -33.47 = EUR 542.59
+    Expenses:Groceries                   CHF 32.30
+    Expenses:Groceries:Chewing Gum        CHF 1.50
+    Assets:Debts:Jan Kwaśniak           CHF 0.75
+
+2022-01-24 * EasyRide
+    Assets:Liquid:BCGE CC    CHF -20.00
+    Expenses:Transport          CHF 20.00
+
+2022-01-25 * REGA Schweizerische Rettungsflugwacht
+    Assets:Liquid:BCGE      CHF -40.00
+    Expenses:Other           CHF 40.00
+
+2022-01-25 * Payment order Interactive Brokers LLC
+    Assets:Liquid:BCGE    CHF -9000.00
+    Assets:Liquid:IB:CHF   CHF 9000.00
+
+2022-01-25 * VT trade
+    Assets:Investments:IB:VT              VT 175
+    Assets:Liquid:IB:USD           USD -17652.25
+    Assets:Liquid:IB:USD               USD -1.00
+    Expenses:Financial Services         USD 1.00
+
+2022-01-25 * CHF.USD
+    Assets:Liquid:IB:CHF           CHF -16500.00 @ USD 1.08845
+    Assets:Liquid:IB:USD                          USD 17959.42
+    Assets:Liquid:IB:CHF                             CHF -1.83
+    Expenses:Financial Services                       CHF 1.83
+
+2022-01-25 * Google Salary
+    Assets:Liquid:BCGE                                          CHF 35101.65
+    Income:Google                                              CHF -48336.50
+    State:2022:Mandatory Contributions:Social Security           CHF 2561.85
+    State:2022:Mandatory Contributions:Unemployment Insurance     CHF 315.80
+    State:2022:Withholding Tax:Total                             CHF 9546.45
+    Assets:Illiquid:AXA Wintherthur Pension Fund                  CHF 810.75
+
+2022/01/25 Galaxus
+    Assets:Liquid:BCGE CC    CHF -57.50
+    Expenses:Other  CHF 25 ; 24 Bottles Urban (1 l)
+    Expenses:Other  32.50 CHF ; Gillette Fusion5 ProGlide (8 x)
+
+2022-01-25 * Coop
+    Assets:Liquid:Revolut:EUR      EUR -13.81 = EUR 528.78
+    Expenses:Groceries                    CHF 8.68
+    Expenses:Groceries:Chewing Gum        CHF 1.50
+    Assets:Debts:Jan Kwaśniak           CHF 4.12
+
+2022-01-26 * VT trade
+    Assets:Investments:IB:VT              VT 74
+    Assets:Liquid:IB:USD           USD -7478.81
+    Assets:Liquid:IB:USD              USD -1.00
+    Expenses:Financial Services        USD 1.00
+
+2022-01-26 * VT trade
+    Assets:Investments:IB:VT               VT 3
+    Assets:Liquid:IB:USD            USD -303.30
+    Assets:Liquid:IB:USD              USD -1.00
+    Expenses:Financial Services        USD 1.00
+
+2022-01-26 * VXUS trade
+    Assets:Investments:IB:VXUS        VXUS -100
+    Assets:Liquid:IB:USD            USD 6155.00
+    Assets:Liquid:IB:USD              USD -1.04
+    Expenses:Financial Services        USD 1.04
+
+2022-01-26 * Coop
+    Assets:Liquid:Revolut:EUR      EUR -15.08 = EUR 513.70
+    Expenses:Groceries                   CHF 14.15
+    Expenses:Groceries:Chewing Gum        CHF 1.50
+
+2022/01/26 * Withholding Tax Repayment
+    Assets:Liquid:BCGE                 CHF 1403.00
+    State:2020:IB Withholding Tax  = 0 CHF
+
+2022-01-27 * VT trade
+    Assets:Investments:IB:VT             VT 100
+    Assets:Liquid:IB:USD           USD -9891.62
+    Assets:Liquid:IB:USD              USD -1.00
+    Expenses:Financial Services        USD 1.00
+
+2022-01-27 * VT trade
+    Assets:Investments:IB:VT              VT 20
+    Assets:Liquid:IB:USD           USD -1978.92
+    Assets:Liquid:IB:USD              USD -1.00
+    Expenses:Financial Services        USD 1.00
+
+2022-01-27 * VT trade
+    Assets:Investments:IB:VT               VT 2
+    Assets:Liquid:IB:USD            USD -197.82
+    Assets:Liquid:IB:USD              USD -1.00
+    Expenses:Financial Services        USD 1.00
+
+2022-01-27 * VT trade
+    Assets:Investments:IB:VT              VT 695
+    Assets:Liquid:IB:USD           USD -68649.46
+    Assets:Liquid:IB:USD               USD -3.48
+    Expenses:Financial Services         USD 3.48
+
+2022-01-27 * VT trade
+    Assets:Investments:IB:VT              VT 36
+    Assets:Liquid:IB:USD           USD -3555.94
+    Assets:Liquid:IB:USD              USD -1.00
+    Expenses:Financial Services        USD 1.00
+
+2022-01-27 * VT trade
+    Assets:Investments:IB:VT               VT 2
+    Assets:Liquid:IB:USD            USD -197.51
+    Assets:Liquid:IB:USD              USD -1.00
+    Expenses:Financial Services        USD 1.00
+
+2022-01-27 * VXUS trade
+    Assets:Investments:IB:VXUS        VXUS -200
+    Assets:Liquid:IB:USD           USD 12063.00
+    Assets:Liquid:IB:USD              USD -1.09
+    Expenses:Financial Services        USD 1.09
+
+2022-01-27 * VXUS trade
+    Assets:Investments:IB:VXUS       VXUS -1200
+    Assets:Liquid:IB:USD           USD 72318.00
+    Assets:Liquid:IB:USD              USD -6.52
+    Expenses:Financial Services        USD 6.52
+
+2022-01-27 * Coop
+    Assets:Liquid:Revolut:EUR       EUR -4.87 = EUR 508.83
+    Expenses:Groceries                    CHF 3.32
+    Expenses:Groceries:Chewing Gum        CHF 1.50
+    Assets:Debts:Jan Kwaśniak           CHF 0.23
+
+2022-01-27 * Coop
+    Assets:Liquid:BCGE CC        CHF -31.80
+    Expenses:Groceries              CHF 16.10
+    Assets:Debts:Jan Kwaśniak     CHF 15.70
+
+P 2022-01-27 VT   98.99 USD
+P 2022-01-27 VXUS 60.31 USD
+P 2022-01-27 IWDA 74.43 EUR
+
+2022/01/27 * BCGE CC Status
+    Assets:Liquid:BCGE CC               CHF 2207.70
+    Assets:Liquid:BCGE               CHF -2207.70
+
+2022-01-28 * HELLOFRESH, Zurich
+    Assets:Liquid:BCGE CC     CHF -116.90
+    Expenses:Groceries:Hello Fresh  CHF 116.90
+
+2022/01/28 * Verzugszins
+    Assets:Liquid:BCGE                 CHF -39.60
+    Expenses:Other
+
+2022-01-28 * EasyRide
+    Assets:Liquid:BCGE CC     CHF -2.30
+    Expenses:Transport           CHF 2.30
+
+2022-01-28 * Coop
+    Assets:Liquid:BCGE CC         CHF -0.30
+    Expenses:Groceries
+
+2022-01-28 * Coop
+    Assets:Liquid:BCGE CC             CHF -11.85
+    Expenses:Groceries                    CHF 8.65
+    Expenses:Groceries:Chewing Gum        CHF 1.50
+    Assets:Debts:Jan Kwaśniak           CHF 1.70
+
+2022-01-28 * Coop
+    Assets:Liquid:BCGE CC    CHF -14.40
+    Expenses:Groceries          CHF 14.40
+
+2022-01-28 * UBER EATS HELP.UBER.CO, help.uber.com
+    Assets:Liquid:BCGE CC      CHF -28.50
+    Expenses:Take Away         CHF 28.50
+
+2022-01-29 * EasyRide
+    Assets:Liquid:BCGE CC    CHF -10.50
+    Expenses:Transport          CHF 10.50
+
+2022-01-29 * Coop
+    Assets:Liquid:BCGE CC             CHF -12.85
+    Expenses:Groceries                    CHF 9.55
+    Expenses:Groceries:Chewing Gum        CHF 1.50
+    Assets:Debts:Jan Kwaśniak           CHF 1.80
+
+2022-01-29 * Coop
+    Assets:Liquid:BCGE CC              CHF -5.15
+    Expenses:Groceries                    CHF 3.65
+    Expenses:Groceries:Chewing Gum        CHF 1.50
+
+P 2022-01-30 USD 0.930648 CHF
+P 2022-01-30 USD 0.897263 EUR
+P 2022-01-30 USD 4.10919 PLN
+
+2022/01/30 * Motorboat Bill
+    Assets:Debts:Maciej  -68.34 EUR
+    Expenses:Other
+
+2022/01/30 * Splitwise Check
+    Assets:Debts:Adam Świeżowski  24.66 EUR = EUR 0
+    Assets:Debts:Zuzanna Świeżowska  -24.66 EUR = EUR 0
+    Assets:Debts:Maciej  34.30 EUR = EUR 0 ; Wiszę Maciejowi flaszkę
+    Expenses:Other  -34.30 EUR
+
+2022-01-31 * Decent
+    Assets:Liquid:Revolut:EUR     EUR -198.90 = EUR 309.93
+    Expenses:Kaffee
+
+2022-01-31 * USD.CHF
+    Assets:Liquid:IB:USD           USD -1.14 @ CHF 0.92699
+    Assets:Liquid:IB:CHF                          CHF 1.06
+    Assets:Liquid:IB:CHF                                 0
+    Expenses:Financial Services                          0
+
+2022-01-31 * Twint Drip Roasters Online-Shop 0400000582000640
+    Assets:Liquid:BCGE      CHF -16.50
+    Expenses:Other           CHF 16.50
+
+2022/01/31 * Standing order Habitat 8000 AG
+    Assets:Liquid:BCGE    CHF -2323.00
+    Assets:Debts:Mike                         794.33 CHF
+    Assets:Debts:Jan Kwaśniak                 794.33 CHF
+    Expenses:Rent
+
+2022-01-31 * Google Salary
+    Assets:Liquid:BCGE                                           CHF 4911.75
+    Income:Google                                                          0
+    State:2021:Mandatory Contributions:Social Security           CHF 3009.55
+    State:2021:Mandatory Contributions:Unemployment Insurance     CHF 283.95
+    State:2021:Withholding Tax:Total                            CHF 13815.65
+    Equity:MssbCs Withholding                                  CHF -22020.90
+
+2022/01/31 * Gutschrift
+    Assets:Liquid:BCGE      CHF 794.33
+    Assets:Liquid:BCGE      CHF 794.33
+    Assets:Debts:Jan Kwaśniak  CHF -794.33
+    Assets:Debts:Mike      CHF -794.33
+
+2022-01-31 * Coop
+    Assets:Liquid:BCGE CC             CHF -16.45
+    Expenses:Groceries                    CHF 8.70
+    Expenses:Gesundheit                   CHF 4.35
+    Expenses:Groceries:Chewing Gum        CHF 1.50
+    Assets:Debts:Jan Kwaśniak           CHF 1.90
+
+2022-01-31 * EasyRide
+    Assets:Liquid:BCGE CC     CHF -2.30
+    Expenses:Transport           CHF 2.30
+
+2022/01/31 * Uber Eats
+    Assets:Liquid:BCGE CC  CHF -54
+    Expenses:Take Away
+    Assets:Debts:Jan Kwaśniak  CHF 24.50
+
+2022/02/01 * Sympany
+    Assets:Liquid:BCGE                 CHF -262.65
+    Expenses:Krankenversicherung
+
+2022/02/01 * Splitwise Repayment
+    Assets:Debts:Mike  -71.25 CHF = 0 CHF
+    Assets:Liquid:BCGE
+
+2022-02-01 * Coop
+    Assets:Liquid:BCGE CC              CHF -4.60
+    Expenses:Groceries                    CHF 3.10
+    Expenses:Groceries:Chewing Gum        CHF 1.50
+
+2022-02-01 * Coop
+    Assets:Liquid:BCGE CC    CHF -16.65
+    Expenses:Groceries
+    Expenses:Haushalt            CHF 3.95
+    Assets:Debts:Jan Kwaśniak   CHF 4.75
+
+2022-02-01 * Patreon
+    Assets:Liquid:Revolut:EUR      EUR -29.33 = EUR 280.60
+    Assets:Liquid:Revolut:USD       USD -3.00 = USD 12.95
+    Expenses:Other                  USD 25.00  ; TimeGhost
+    Expenses:Other                   USD 3.00  ; James Hoffmann
+    Expenses:Other                   USD 5.00  ; Lance Hedrick
+
+2022-02-02 * EasyRide
+    Assets:Liquid:BCGE CC     CHF -4.10
+    Expenses:Transport           CHF 4.10
+
+2022-02-02 * Coop
+    Assets:Liquid:BCGE CC             CHF -16.95
+    Expenses:Groceries
+    Expenses:Groceries:Chewing Gum        CHF 1.50
+    Expenses:Other                       CHF -3.30
+
+2022-02-02 * Degiro Status
+    Assets:Liquid:Degiro                         0 = CHF 245.29
+    Assets:Investments:Degiro:IWDA               0 = IWDA 3284
+
+P 2022-02-02 IWDA 75.63 EUR
+
+2022-02-03 * Coop
+    Assets:Liquid:BCGE CC         CHF -4.30
+    Expenses:Groceries               CHF 0.40
+    Expenses:Haushalt                CHF 1.75
+    Assets:Debts:Jan Kwaśniak      CHF 2.15
+
+2022-02-03 * Giro Exchange Connection Fee 2022
+    Assets:Liquid:Degiro              EUR -2.50 = EUR -2.50
+    Expenses:Financial Services        EUR 2.50
+
+2022-02-04 * Degiro Forex
+    Assets:Liquid:Degiro                  EUR 2.50 = EUR 0.00
+    Assets:Liquid:Degiro    CHF -2.63 @ EUR 0.9477 = CHF 242.66
+    Expenses:Financial Services  EUR -0.01
+
+2022-02-04 * EasyRide
+    Assets:Liquid:BCGE CC     CHF -2.30
+    Expenses:Transport           CHF 2.30
+
+2022-02-04 * Coop
+    Assets:Liquid:BCGE CC             CHF -10.20
+    Expenses:Groceries                    CHF 4.95
+    Expenses:Haushalt                     CHF 1.88
+    Expenses:Groceries:Chewing Gum        CHF 1.50
+    Assets:Debts:Jan Kwaśniak           CHF 1.87
+
+2022-02-04 * Decent Espresso 913
+    Assets:Liquid:Revolut:EUR      EUR -30.00 = EUR 250.60
+    Expenses:Kaffee
+
+2022-02-04 * Amzn Mktp De Amazon.de
+    Assets:Liquid:Revolut:EUR      EUR -53.77 = EUR 196.83
+    Expenses:Kaffee  ; Normcore Tamper v4 58.5mm, Normcore 58.5 Puck Screen
+
+2022-02-04 * Coop
+    Assets:Liquid:BCGE CC             CHF -19.10
+    Expenses:Groceries                   CHF 11.60
+    Expenses:Groceries:Chewing Gum        CHF 1.50
+    Assets:Debts:Jan Kwaśniak           CHF 6.00
+
+2022-02-05 * Coop
+    Assets:Liquid:BCGE CC             CHF -14.80
+    Expenses:Groceries                   CHF 11.75
+    Expenses:Groceries:Chewing Gum        CHF 1.50
+    Assets:Debts:Jan Kwaśniak           CHF 1.55
+
+2022-02-05 * Coop
+    Assets:Liquid:BCGE CC    CHF -14.15
+    Expenses:Groceries          CHF 14.15
+
+2022-02-05 * digitec Galaxus (Onlin, Zürich
+    Assets:Liquid:BCGE CC      CHF -52.60
+    Assets:Debts:Ewa Nowicka  CHF 14.90
+    Assets:Debts:Damian Chromejko  CHF  21.30
+    Expenses:Haushalt
+
+2022-02-06 * EasyRide
+    Assets:Liquid:BCGE CC     CHF -2.30
+    Expenses:Transport           CHF 2.30
+
+2022-02-06 * Audible Gmbh*G34F70305, audible.de/rg
+    Assets:Liquid:BCGE CC            CHF -10.90
+    Expenses:Financial Services        CHF 0.20
+    Expenses:Leisure:Audible
+
+2022-02-07 * Twint Nowicka, Ewa, +41767084747 0400000591549789
+    Assets:Liquid:BCGE       CHF 14.90
+    Assets:Debts:Ewa Nowicka      CHF -14.90
+
+2022/02/07 * LIDIA SCHOLPP
+    Assets:Liquid:BCGE  CHF -157.40
+    Expenses:Gesundheit
+
+2022-02-07 * Patreon* Membership
+    Assets:Liquid:Revolut:USD       USD -2.00 = USD 10.95
+    Expenses:Leisure:Patreon
+
+2022-02-07 * Coop
+    Assets:Liquid:BCGE CC             CHF -20.65
+    Expenses:Groceries
+    Expenses:Gesundheit                   CHF 5.15
+    Expenses:Groceries:Chewing Gum        CHF 1.50
+
+2022-02-07 * Degiro Cash Sweep Transfer
+    Assets:Liquid:Degiro               CHF 2.63 = CHF 245.29
+    Expenses:Financial Services       CHF -2.63
+
+2022-02-07 * Transfer from your Cash Account at flatex Bank: 2.63 CHF
+    Assets:Liquid:Degiro              CHF -2.63 = CHF 242.66
+    Expenses:Financial Services        CHF 2.63
+
+2022-02-07 * UBER EATS HELP.UBER.CO, help.uber.com
+    Assets:Liquid:BCGE CC      CHF -28.50
+    Expenses:Take Away
+
+2022-02-08 * Coop
+    Assets:Liquid:BCGE CC    CHF -26.25
+    Expenses:Groceries          CHF 26.25
+
+2022-02-09 * EasyRide
+    Assets:Liquid:BCGE CC     CHF -3.10
+    Expenses:Transport           CHF 3.10
+
+2022-02-09 * Coop
+    Expenses:Other                       CHF -2.95
+    Assets:Liquid:BCGE CC             CHF -22.30
+    Expenses:Groceries                   CHF 23.45
+    Expenses:Groceries:Chewing Gum        CHF 1.50
+    Assets:Debts:Jan Kwaśniak           CHF 3.00
+    Expenses:Other                       CHF -2.70
+
+2022-02-09 * Mucho Mobile, Grand-Lancy
+    Assets:Liquid:BCGE CC       CHF -9.90
+    Expenses:Handy               CHF 9.90
+
+2022/02/10 * Digitec
+    Assets:Liquid:BCGE  CHF -729.00
+    ! Assets:Properties  1 "Samsung Galaxy Tab S8" @ CHF 729
+
+2022-02-10 * Twint Chromejko, Damian, +41779142773 0400000596028389
+    Assets:Liquid:BCGE       CHF 21.30
+    Assets:Debts:Damian Chromejko
+
+2022-02-10 * EasyRide
+    Assets:Liquid:BCGE CC     CHF -3.10
+    Expenses:Transport           CHF 3.10
+
+2022-02-10 * Patreon* Membership
+    Assets:Liquid:Revolut:USD       USD -5.00 = USD 5.95
+    Expenses:Leisure:Patreon
+
+2022-02-10 * Coop
+    Assets:Liquid:BCGE CC              CHF -9.80
+    Expenses:Groceries                    CHF 4.85
+    Expenses:Groceries:Chewing Gum        CHF 4.95
+
+2022-02-10 * UBER *EATS, HELP.UBER.COM
+    Assets:Liquid:BCGE CC      CHF -32.50
+    Expenses:Take Away
+
+2022-02-11 * HELLOFRESH, Zurich
+    Assets:Liquid:BCGE CC     CHF -116.90
+    Expenses:Groceries:Hello Fresh
+
+2022-02-11 * PAYPAL *SMASHWORDS, 4083581824
+    Assets:Liquid:BCGE CC             CHF -7.05
+    Expenses:Financial Services        CHF 0.10
+    Expenses:Other                     CHF 6.95
+
+2022/02/11 * Digitec
+    Assets:Liquid:BCGE  CHF -129.00
+    Assets:Properties  1 "Xtorm XB304 Titan" @ CHF 129
+
+2022-02-11 * EasyRide
+    Assets:Liquid:BCGE CC     CHF -2.30
+    Expenses:Transport           CHF 2.30
+
+2022-02-11 * Verkehrsamt
+    Assets:Liquid:BCGE     CHF -145.00
+    Expenses:Motorrad       CHF 145.00  ; Strassenverkehrssteuern BMW F800R
+
+2022-02-11 * UBER EATS HELP.UBER.CO, help.uber.com
+    Assets:Liquid:BCGE CC      CHF -34.00
+    Expenses:Take Away
+
+2022-02-12 * Coop
+    Assets:Liquid:BCGE CC    CHF -65.15
+    Expenses:Groceries          CHF 60.20
+    Expenses:Haushalt            CHF 4.95
+
+2022-02-12 * Coop
+    Assets:Liquid:BCGE CC             CHF -27.95
+    Expenses:Groceries                   CHF 13.03
+    Expenses:Groceries:Ready Meals       CHF 15.40
+    Assets:Debts:Jan Kwaśniak           CHF 1.27
+    Expenses:Other                       CHF -1.75
+
+P 2022-02-12 USD 0.926142 CHF
+P 2022-02-12 USD 0.881034 EUR
+P 2022-02-12 USD 4.028948 PLN
+
+2022/02/14 * Drip Roasters
+    Assets:Liquid:BCGE      CHF -35.00
+    Expenses:Groceries:Coffee  ; Kaffee
+
+2022-02-14 * Coop
+    Assets:Liquid:BCGE CC             CHF -13.25
+    Expenses:Groceries                    CHF 3.15
+    Expenses:Haushalt                     CHF 1.75
+    Expenses:Groceries:Chewing Gum        CHF 4.95
+    Assets:Debts:Jan Kwaśniak           CHF 3.40
+
+2022-02-14 * Coop
+    Assets:Liquid:BCGE CC     CHF -8.80
+    Expenses:Groceries           CHF 8.80
+
+2022/02/15 * Finders Keepers
+    Assets:Cash:CHF:Cold Storage         0.20 CHF
+    Expenses:Other
+
+2022-02-16 * Coop
+    Assets:Liquid:BCGE CC         CHF -1.75
+    Expenses:Groceries               CHF 0.88
+    Assets:Debts:Jan Kwaśniak      CHF 0.87
+
+2022-02-16 * PUREGYM AG MOTO ONLINE, VOLKETSWIL
+    Assets:Liquid:BCGE CC      CHF -39.00
+    Expenses:Gym              CHF 39.00
+
+2022-02-17 * EasyRide
+    Assets:Liquid:BCGE CC     CHF -2.30
+    Expenses:Transport           CHF 2.30
+
+2022/02/17 * HABITAT 8000 AG -- Heating
+    Assets:Liquid:BCGE                      CHF -61.60
+    Assets:Debts:Jan Kwaśniak                30.80 CHF
+    Expenses:Haushalt
+
+2022/02/17 * HABITAT 8000 AG -- Heating
+    Assets:Liquid:BCGE                      CHF -221.40
+    Assets:Debts:Jan Kwaśniak                110.70 CHF
+    Expenses:Haushalt
+
+2022-02-17 * Coop
+    Assets:Liquid:BCGE CC     CHF -7.25
+    Expenses:Groceries           CHF 7.25
+
+2022/02/17 Zalando -- Handschuhe
+    Assets:Liquid:BCGE CC  CHF -66
+    Assets:Debts:Zalando   CHF 33
+    Expenses:Kleidung
+
+2022/02/17 * Galaxus
+    Assets:Liquid:BCGE    CHF -31.40
+    Expenses:Other  ; Onyx Eingabestift Boox Pen Plus Blau
+
+2022-02-17 * Patreon* Membership
+    Assets:Liquid:Revolut:EUR       EUR -4.40 = EUR 192.43
+    Assets:Liquid:Revolut:USD       USD -2.00 = USD 3.95
+    Expenses:Leisure:Patreon
+
+2022/02/17 * Finders Keepers
+    Assets:Cash:CHF:Cold Storage         50 CHF
+    Expenses:Other
+
+2022-02-18 * HELLOFRESH, Zurich
+    Assets:Liquid:BCGE CC     CHF -116.90
+    Expenses:Groceries:Hello Fresh
+
+2022-02-18 * digitec Galaxus (Onlin, Zürich
+    Assets:Liquid:BCGE CC      CHF -18.95
+    Expenses:Other              CHF 18.95
+
+2022-02-18 * Gutschrift
+    Assets:Liquid:BCGE       CHF 71.25
+    Assets:Debts:Filip Kowalski  = CHF 0
+
+2022-02-18 * EasyRide
+    Assets:Liquid:BCGE CC     CHF -2.30
+    Expenses:Transport           CHF 2.30
+
+2022-02-18 * Coop
+    Assets:Liquid:BCGE CC             CHF -23.05
+    Expenses:Groceries                   CHF 15.60
+    Expenses:Groceries:Ready Meals        CHF 7.45
+
+2022/02/18 * gofitness.ch
+    Assets:Liquid:BCGE  CHF -68.70
+    Expenses:Sport Supplements  ; Olimp - Beta Alanine Xplode - 420g, sinob - Vitamin D3 + K2 - 60 Kapseln
+
+2022-02-18 * IB Status
+    Assets:Liquid:IB:CHF                   0 = CHF 33.92
+    Assets:Liquid:IB:PLN                   0 = PLN 0.00
+    Assets:Liquid:IB:USD                   USD -0.01 = USD 0.00
+    Assets:Investments:IB:VT               0 = VT 9917
+    Assets:Investments:IB:VXUS               0 = VXUS 0
+    Expenses:Financial Services
+
+P 2022-02-18 VT 100.28 USD
+
+2022-02-19 * Coop
+    Assets:Liquid:BCGE CC             CHF -14.05
+    Expenses:Groceries
+    Expenses:Groceries:Chewing Gum        CHF 1.50
+    Assets:Debts:Jan Kwaśniak           CHF 1.85
+    Assets:Debts:Jan Kwaśniak           CHF 4.02
+
+2022-02-19 * BCGE Status
+    Assets:Liquid:BCGE               0 = CHF 60622.98
+
+2022-02-19 * Degiro Status
+    Assets:Liquid:Degiro                         CHF 0 = CHF 242.66
+    Assets:Liquid:Degiro                         EUR 0 = EUR 0
+    Assets:Investments:Degiro:IWDA               0 = IWDA 3284
+
+P 2022-02-19 IWDA 72.94 EUR
+
+2022-02-19 * Return
+    Assets:Liquid:BCGE    CHF 1070.00
+    Assets:Debts:Jan Kwaśniak           = CHF 0
+    Expenses:Other  CHF 0.31
+
+2022-02-19 * Galaxus
+    Assets:Liquid:BCGE CC   CHF -124.90
+    Expenses:Kaffee  ; CreaTable Nature (80 ml, 4 x, Tasse, Untertasse),  Lelit Tamper (1 Stk.)
+
+2022-02-19 * Coop
+    Assets:Liquid:BCGE CC        CHF -11.45
+    Expenses:Groceries               CHF 6.50
+    Expenses:Haushalt                CHF 2.48
+    Assets:Debts:Jan Kwaśniak      CHF 2.47
+
+2022-02-19 * Coop
+    Assets:Liquid:BCGE CC             CHF -13.40
+    Expenses:Groceries                    CHF 3.95
+    Expenses:Groceries:Chewing Gum        CHF 1.50
+    Expenses:Groceries:Ready Meals        CHF 7.95
+
+2022-02-20 * GOOGLE *YouTubePremium, g.co/helppay#
+    Assets:Liquid:BCGE CC      CHF -15.90
+    Expenses:Leisure:Youtube              CHF 15.90
+
+P 2022-02-20 USD 0.921216 CHF
+P 2022-02-20 USD 0.883232 EUR
+P 2022-02-20 USD 4.000578 PLN
+
+2022/02/21 * Payment order Interactive Brokers LLC
+    Assets:Liquid:BCGE    CHF -13000.00
+    Assets:Liquid:IB:CHF   CHF 13000.00
+
+2022-02-21 * EasyRide
+    Assets:Liquid:BCGE CC     CHF -2.30
+    Expenses:Transport           CHF 2.30
+
+2022-02-21 * Coop
+    Assets:Liquid:BCGE CC        CHF -10.45
+    Expenses:Groceries               CHF 6.95
+    Expenses:Haushalt                CHF 1.75
+    Assets:Debts:Jan Kwaśniak      CHF 1.75
+
+2022/02/21 * Joke
+    Assets:Liquid:BCGE    CHF -3.50
+    Expenses:Other
+
+2022-02-21 * CHF.USD
+    Assets:Liquid:IB:CHF           CHF -12990.00 @ USD 1.0917
+    Assets:Liquid:IB:USD                         USD 14181.18
+    Assets:Liquid:IB:CHF                            CHF -1.84
+    Expenses:Financial Services                      CHF 1.84
+
+2022-02-22 * RICARDO AG, ZUG
+    Assets:Liquid:BCGE CC       CHF -4.60
+    Assets:Debts:Ricardo
+
+2022-02-22 * EasyRide
+    Assets:Liquid:BCGE CC     CHF -2.30
+    Expenses:Transport           CHF 2.30
+
+2022-02-22 * Coop
+    Assets:Liquid:BCGE CC    CHF -10.30
+    Expenses:Groceries          CHF 10.30
+
+2022-02-22 * Szenario Hair Design, Pfäffikon SZ
+    Assets:Liquid:BCGE CC      CHF -45.00
+    Expenses:Hairdresser              CHF 45.00
+
+2022-02-22 * UBER *EATS, HELP.UBER.COM
+    Assets:Liquid:BCGE CC      CHF -34.00
+    Expenses:Take Away              CHF 34.00
+
+2022-02-22 * VT trade
+    Assets:Investments:IB:VT              VT 41
+    Assets:Liquid:IB:USD           USD -4083.19
+    Assets:Liquid:IB:USD              USD -1.00
+    Expenses:Financial Services        USD 1.00
+
+2022-02-22 * BCGE CC Status
+    Assets:Liquid:BCGE CC               0 = CHF -1583.90
+
+2022-02-22 * Uber Eats
+    ! Assets:Liquid:BCGE CC    CHF -34.00
+    Expenses:Take Away          CHF 34.00
+
+2022-02-23 * EasyRide
+    ! Assets:Liquid:BCGE CC     CHF -3.10
+    Expenses:Transport           CHF 3.10
+
+2022-02-24 * Coop
+    ! Assets:Liquid:BCGE CC     CHF -3.60
+    Expenses:Groceries           CHF 1.80
+    Assets:Debts:Jan Kwaśniak  CHF 1.80
+
+2022/02/24 * Ricardo
+    Assets:Liquid:BCGE  CHF 33
+    Assets:Debts:Ricardo  CHF -2.35
+    Assets:Debts:Ricardo  CHF -7.00
+    Expenses:Other  ; Stadler Form Bedufter
+
+2022/02/24 * gofitness.ch
+    Assets:Liquid:BCGE  CHF 68.70
+    Expenses:Sport Supplements  ; Olimp - Beta Alanine Xplode - 420g, sinob - Vitamin D3 + K2 - 60 Kapseln
+
+2022/02/24 * Piotr Kucharski
+    Assets:Liquid:BCGE  CHF 6.00
+    Expenses:Other  ; Zurich IQ, GEB
+
+2022-02-24 * VT trade
+    Assets:Investments:IB:VT             VT 100
+    Assets:Liquid:IB:USD           USD -9618.50
+    Assets:Liquid:IB:USD              USD -1.00
+    Expenses:Financial Services        USD 1.00
+
+2022-02-24 * Digitec/Galaxus
+    ! Assets:Liquid:BCGE CC    CHF -64.70
+    Expenses:Sport Supplements  CHF 40.80  ; Alpine Labs Beta Alanine (90 x)
+    Expenses:Sport Supplements  CHF 23.90  ; IronMaxx Vitamin D3 + K2 (150 Tabs) (Neutral)
+
+2022-02-25 * EasyRide
+    ! Assets:Liquid:BCGE CC     CHF -2.30
+    Expenses:Transport           CHF 2.30
+
+2022-02-25 * Coop
+    ! Assets:Liquid:BCGE CC    CHF -15.65
+    Expenses:Groceries          CHF 12.53
+    Assets:Debts:Jan Kwaśniak  CHF 3.12
+
+2022-02-25 Google Salary
+    ! Assets:Liquid:BCGE                                          CHF 11324.05
+    * Income:Google                                              CHF -14836.50
+    * State:2022:Mandatory Contributions:Social Security            CHF 786.35
+    * State:2022:Mandatory Contributions:Unemployment Insurance     CHF 148.30
+    * State:2022:Withholding Tax:Total                             CHF 1767.05
+    * Assets:Illiquid:AXA Wintherthur Pension Fund                  CHF 810.75
+
+2022-02-25 * IB Status
+    Assets:Liquid:IB:CHF                   0 = CHF 42.08
+    Assets:Liquid:IB:PLN                   0 = PLN 0.00
+    Assets:Liquid:IB:USD                   0 = USD 477.49
+    Assets:Investments:IB:VT               0 = VT 10058
+
+P 2022-02-25 VT 100.29 USD
+P 2022-02-25 IWDA 73.17 EUR
+
+2022-02-26 * Coop
+    ! Assets:Liquid:BCGE CC              CHF -8.95
+    Expenses:Groceries
+    Expenses:Haushalt  CHF 3.25
+    Expenses:Groceries:Chewing Gum        CHF 1.50
+    Assets:Debts:Jan Kwaśniak           CHF 4.73
+    Expenses:Other                       CHF -2.00
+
+2022-02-26 * Uber Eats
+    ! Assets:Liquid:BCGE CC    CHF -28.50
+    Expenses:Take Away          CHF 28.50
+
+2022-02-27 * Uber Eats
+    ! Assets:Liquid:BCGE CC    CHF -32.50
+    Expenses:Take Away          CHF 32.50
+
+2022-02-28 * EasyRide
+    ! Assets:Liquid:BCGE CC     CHF -2.30
+    Expenses:Transport           CHF 2.30
+
+2022/02/28 * Standing order Habitat 8000 AG
+    Assets:Liquid:BCGE    CHF -2323.00
+    Assets:Debts:Mike                         794.33 CHF
+    Assets:Debts:Jan Kwaśniak                 794.33 CHF
+    Expenses:Rent
+
+2022/02/28 * Gutschrift
+    Assets:Liquid:BCGE      CHF 794.33
+    Assets:Liquid:BCGE      CHF 794.33
+    Assets:Debts:Jan Kwaśniak  CHF -794.33
+    Assets:Debts:Mike      CHF -794.33
+
+2022-03-01 * Coop
+    ! Assets:Liquid:BCGE CC             CHF -18.05
+    Expenses:Groceries                    CHF 9.93
+    Expenses:Gesundheit                   CHF 5.15
+    Expenses:Groceries:Chewing Gum        CHF 1.50
+    Assets:Debts:Jan Kwaśniak           CHF 1.47
+
+2022-03-01 * EasyRide
+    ! Assets:Liquid:BCGE CC     CHF -3.10
+    Expenses:Transport           CHF 3.10
+
+2022-03-01 * Support Ukrainian Refugees in Poland
+    Assets:Debts:Google  CHF -250
+    Expenses:Charity
+
+2022-03-01 * Coop
+    ! Assets:Liquid:BCGE CC              CHF -3.80
+    Expenses:Groceries:Ready Meals        CHF 3.80
+
+2022-03-01 * Coop
+    ! Assets:Liquid:BCGE CC        CHF -36.75
+    Expenses:Groceries              CHF 12
+    Expenses:Groceries:Alcohol      CHF 12.75
+    Assets:Debts:Jan Kwaśniak     CHF 12.00
+
+2022/03/01 * Ricardo
+    Assets:Liquid:BCGE  CHF 22
+    Assets:Debts:Ricardo  CHF -1.35
+    Assets:Debts:Ricardo  CHF -7.00
+    Expenses:Other  ; JoeFrex Base Flat 58mm
+
+2022-03-01 * Uber Eats
+    ! Assets:Liquid:BCGE CC    CHF -26.00
+    Expenses:Take Away          CHF 26.00
+
+2022-03-01 * Patreon
+    ! Assets:Liquid:Revolut:USD    USD -47.00
+    Expenses:Leisure:Patreon        USD 10.00  ; Alexander Grace
+    Expenses:Leisure:Patreon         USD 2.00  ; 3Blue1Brown
+    Expenses:Leisure:Patreon         USD 2.00  ; Internet Historian
+    Expenses:Leisure:Patreon        USD 25.00  ; TimeGhost
+    Expenses:Leisure:Patreon         USD 3.00  ; James Hoffmann
+    Expenses:Leisure:Patreon         USD 5.00  ; Lance Hedrick
+
+2022-03-02 * EasyRide
+    ! Assets:Liquid:BCGE CC     CHF -4.10
+    Expenses:Transport           CHF 4.10
+
+2022-03-02 * Coop
+    ! Assets:Liquid:BCGE CC              CHF -9.30
+    Expenses:Groceries                    CHF 4.30
+    Expenses:Haushalt                     CHF 1.75
+    Expenses:Groceries:Chewing Gum        CHF 1.50
+    Assets:Debts:Jan Kwaśniak           CHF 1.75
+
+2022/03/02 * EW Höfe
+  ! Assets:Liquid:BCGE                       -153.80 CHF
+  Expenses:Media
+  Assets:Debts:Jan Kwaśniak                  76.93 CHF
+
+2022-03-03 * Coop
+    ! Assets:Liquid:BCGE CC              CHF -8.45
+    Expenses:Groceries                    CHF 6.95
+    Expenses:Groceries:Chewing Gum        CHF 1.50
+
+2022-03-03 * EasyRide
+    ! Assets:Liquid:BCGE CC     CHF -2.30
+    Expenses:Transport           CHF 2.30
+
+2022-03-03 * Coop
+    ! Assets:Liquid:BCGE CC     CHF -6.00
+    Expenses:Groceries           CHF 6.00
+
+2022-03-03 * Uber Eats
+    ! Assets:Liquid:BCGE CC    CHF -26.00
+    Expenses:Take Away          CHF 26.00
+
+2022-03-03 * PAYPAL *WIKIMEDIACH, 4029357733
+    Assets:Liquid:BCGE CC         -6.80 CHF
+    Expenses:Charity               6.80 CHF
+
+2022-03-04 * Coop
+    ! Assets:Liquid:BCGE CC              CHF -1.50
+    Expenses:Groceries:Chewing Gum        CHF 1.50
+
+2022-03-04 * EasyRide
+    ! Assets:Liquid:BCGE CC     CHF -2.30
+    Expenses:Transport           CHF 2.30
+
+2022-03-04 * Coop
+    ! Assets:Liquid:BCGE CC         CHF -9.90
+    Expenses:Groceries               CHF 8.43
+    Assets:Debts:Jan Kwaśniak      CHF 1.47
+
+2022-03-04 * IB Status
+    Assets:Liquid:IB:CHF                   0 = CHF 42.08
+    Assets:Liquid:IB:PLN                   0 = PLN 0.00
+    Assets:Liquid:IB:USD                   0 = USD 477.49
+    Assets:Investments:IB:VT               0 = VT 10058
+
+2022-03-05 * Coop
+    ! Assets:Liquid:BCGE CC             CHF -19.60
+    Expenses:Groceries                   CHF 17.40
+    Expenses:Groceries:Chewing Gum        CHF 1.50
+    Assets:Debts:Jan Kwaśniak           CHF 0.70
+
+2022-03-05 * Digitec/Galaxus
+    ! Assets:Liquid:BCGE CC   CHF -132.00
+    ! Assets:Properties  1 "Fellowes Hana" @ CHF 132
+
+2022-03-05 * Digitec/Galaxus
+    ! Assets:Liquid:BCGE CC    CHF -18.00
+    ! Expenses:Haushalt         CHF 18.00  ; Hama Ergonomic (S)
+
+2022-03-05 * Uber Eats
+    ! Assets:Liquid:BCGE CC    CHF -35.00
+    Expenses:Take Away          CHF 35.00
+
+2022-03-07 * Coop
+    ! Assets:Liquid:BCGE CC        CHF -15.50
+    Expenses:Groceries              CHF 12.05
+    ! Assets:Debts:Jan Kwaśniak      CHF 3.45
+
+2022-03-07 * Uber Eats
+    ! Assets:Liquid:BCGE CC    CHF -28.50
+    Expenses:Take Away          CHF 28.50
+
+2022/03/07 * Maciej's Charity
+    Assets:Debts:Maciej  4000 PLN
+    Expenses:Other  -4000 PLN
+    Assets:Debts:Google  -814.17 CHF
+    Expenses:Charity  814.17 CHF
+
+P 2022-03-07 VT 93.91 USD
+
+2022-03-07 * VT trade
+    Assets:Investments:IB:VT               VT 5
+    Assets:Liquid:IB:USD            USD -471.12
+    Assets:Liquid:IB:USD              USD -1.00
+    Expenses:Financial Services        USD 1.00
+
+2022-03-07 * CHF.USD
+    Assets:Liquid:IB:CHF           CHF -22.00 @ USD 1.08005
+    Assets:Liquid:IB:USD                          USD 23.76
+    Assets:Liquid:IB:CHF                          CHF -1.83
+    Expenses:Financial Services                    CHF 1.83
+
+2022-03-07 * IB Status
+    Assets:Liquid:IB:CHF                   0 = CHF 18.25
+    Assets:Liquid:IB:PLN                   0 = PLN 0.00
+    Assets:Liquid:IB:USD                   0 = USD 29.13
+    Assets:Investments:IB:VT               0 = VT 10063
+
+P 2022-03-07 VT 93.9 USD
+
+2022/03/08 ! Payment order Interactive Brokers LLC
+    Assets:Liquid:BCGE    CHF -10000.00
+    Assets:Liquid:IB:CHF   CHF 10000.00
+
+2022-03-08 * EasyRide
+    ! Assets:Liquid:BCGE CC     CHF -2.30
+    Expenses:Transport           CHF 2.30
+
+2022-03-08 * Coop
+    ! Assets:Liquid:BCGE CC              CHF -3.20
+    Expenses:Groceries                    CHF 1.70
+    Expenses:Groceries:Chewing Gum        CHF 1.50
+
+2022/03/09 ! Drip Roasters
+    Assets:Liquid:BCGE      CHF -21.50
+    Expenses:Groceries:Coffee  ; Kaffee
+
+2022-03-09 * EasyRide
+    ! Assets:Liquid:BCGE CC     CHF -3.10
+    Expenses:Transport           CHF 3.10
+
+2022-03-09 * Coop
+    ! Assets:Liquid:BCGE CC             CHF -29.90
+    Expenses:Groceries                   CHF 16.40
+    Expenses:Groceries:Chewing Gum        CHF 1.50
+    ! Assets:Debts:Jan Kwaśniak          CHF 12.00
+
+2022-03-10 * Coop
+    ! Assets:Liquid:BCGE CC     CHF -6.95
+    Expenses:Groceries:Ready Meals           CHF 6.95
+
+2022-03-10 * Coop
+    ! Assets:Liquid:BCGE CC    CHF -12.60
+    Expenses:Groceries:Coffee   CHF  6.30
+    Assets:Debts:Jan Kwaśniak   CHF  6.30
+
+2022-03-10 * Uber Eats
+    ! Assets:Liquid:BCGE CC    CHF -28.50
+    Expenses:Take Away          CHF 28.50
+
+2022-03-11 * EasyRide
+    ! Assets:Liquid:BCGE CC    CHF -19.80
+    Expenses:Transport          CHF 19.80
+
+2022-03-11 * Coop
+    ! Assets:Liquid:BCGE CC              CHF -1.50
+    Expenses:Groceries:Chewing Gum        CHF 1.50
+
+2022-03-11 * Coop
+    ! Assets:Liquid:BCGE CC             CHF -32.45
+    Expenses:Groceries                   CHF 14.20
+    Expenses:Groceries:Ready Meals       CHF 14.95
+    ! Assets:Debts:Jan Kwaśniak           CHF 3.30
+
+2022-03-12 * EasyRide
+    ! Assets:Liquid:BCGE CC     CHF -2.30
+    Expenses:Transport           CHF 2.30

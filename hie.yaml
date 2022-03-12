@@ -1,0 +1,13 @@
+cradle:
+  stack:
+    - path: "./src"
+      component: "debt-collector:lib"
+
+    - path: "./app/Main.hs"
+      component: "debt-collector:exe:debt-collector"
+
+    - path: "./app/Paths_hledupt.hs"
+      component: "debt-collector:exe:debt-collector"
+
+    - path: "./test"
+      component: "debt-collector:test:debt-collector-test"
