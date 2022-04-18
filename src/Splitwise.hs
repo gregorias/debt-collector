@@ -43,7 +43,7 @@ splitwiseCli apiKey (Cash currency amount) expenseUsers = do
   (exitCode, _out, err) <-
     liftIO $
       procStrictWithErr
-        "/home/grzesiek/.local/bin/splitwise-cli"
+        "/Users/grzesiek/.local/bin/splitwise-cli"
         ( [ "--api_key=" <> apiKey
           , "--description=automated entry"
           , "--cost=" <> showDecimal amount
