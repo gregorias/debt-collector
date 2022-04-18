@@ -113,5 +113,3 @@ tests:
     - -rtsopts
     - -with-rtsopts=-N
     - -Wunused-packages
-    dependencies:
-    - debt-collector
