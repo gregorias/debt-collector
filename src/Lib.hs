@@ -63,7 +63,7 @@ checkAndCollectDebt line = callCC $ \exit -> do
   serviceDebt (PendingDebt debtor cost) = callCC $ \exit -> do
     maybeApiKey <-
       readMaybe . toString . T.strip
-        <$> readFileText "/home/grzesiek/Code/findata/debt-collector/splitwise-api-key.txt"
+        <$> readFileText "/Users/grzesiek/Code/findata/debt-collector/splitwise-api-key.txt"
     apiKey <-
       maybe
         ( do
