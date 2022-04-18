@@ -87,7 +87,7 @@ checkAndCollectDebt line = callCC $ \exit -> do
 
 main :: IO ()
 main = do
-  Turtle.update checkAndCollectDebtSh (Turtle.fromText "/home/grzesiek/Documents/Finance/Wallet/wallet.txt")
+  Turtle.update checkAndCollectDebtSh (Turtle.fromText "/Users/grzesiek/Documents/Finance/Wallet/wallet.txt")
  where
   checkAndCollectDebtSh :: Turtle.Shell Turtle.Line -> Turtle.Shell Turtle.Line
   checkAndCollectDebtSh shellLines = do
