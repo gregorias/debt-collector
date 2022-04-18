@@ -5,15 +5,15 @@
 
 packages:
 - completed:
-    pantry-tree:
-      sha256: 9802924b7472c67d93312eedbbb49ab250b9651101b27668133b9f5d15dbca78
-      size: 548
     hackage: currency-codes-3.0.0.1@sha256:a4b24669dd91e805b11d9eb267becd0ba6d726927e535e03d5f3f368f44c1cf4,2902
+    pantry-tree:
+      size: 548
+      sha256: 9802924b7472c67d93312eedbbb49ab250b9651101b27668133b9f5d15dbca78
   original:
     hackage: currency-codes-3.0.0.1
 snapshots:
 - completed:
-    sha256: d32407cb1e3a8e180ee6b25ee8e42ac539822728769faf30e7d05c980c76bf2c
-    size: 610848
-    url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/nightly/2022/3/12.yaml
-  original: nightly-2022-03-12
+    size: 618683
+    url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/lts/19/4.yaml
+    sha256: d4ee004c46ba878d2f304f5d748d493057be579192a8d148527f3ba55c9df57f
+  original: lts-19.4
