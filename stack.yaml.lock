@@ -7,13 +7,13 @@ packages:
 - completed:
     hackage: currency-codes-3.0.0.1@sha256:a4b24669dd91e805b11d9eb267becd0ba6d726927e535e03d5f3f368f44c1cf4,2902
     pantry-tree:
-      size: 548
       sha256: 9802924b7472c67d93312eedbbb49ab250b9651101b27668133b9f5d15dbca78
+      size: 548
   original:
     hackage: currency-codes-3.0.0.1
 snapshots:
 - completed:
-    size: 618683
-    url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/lts/19/4.yaml
-    sha256: d4ee004c46ba878d2f304f5d748d493057be579192a8d148527f3ba55c9df57f
-  original: lts-19.4
+    sha256: 42f77c84b34f68c30c2cd0bf8c349f617a0f428264362426290847a6a2019b64
+    size: 649618
+    url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/lts/20/19.yaml
+  original: lts-20.19

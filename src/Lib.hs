@@ -62,8 +62,8 @@ checkAndCollectDebt line = callCC $ \exit -> do
   serviceDebt :: (MonadIO m, MonadWriter Text m, MonadCont m) => PendingDebt -> m Turtle.Line
   serviceDebt (PendingDebt debtor cost) = callCC $ \exit -> do
     maybeApiKey <-
-      readMaybe . toString . T.strip
-        <$> readFileText "/Users/grzesiek/Code/findata/debt-collector/splitwise-api-key.txt"
+      readMaybe . toString . T.strip . decodeUtf8
+        <$> readFileBS "/Users/grzesiek/Code/findata/debt-collector/splitwise-api-key.txt"
     apiKey <-
       maybe
         ( do
