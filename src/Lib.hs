@@ -16,6 +16,7 @@ import Control.Monad.Writer (
  )
 import qualified Data.Text as T
 import Data.Text.IO (hPutStrLn)
+import GHC.IO.Encoding (setLocaleEncoding, utf8)
 import Relude
 import Splitwise (createSplitwiseExpense)
 import qualified Text.Megaparsec as MP
@@ -62,7 +63,10 @@ checkAndCollectDebt line = callCC $ \exit -> do
   serviceDebt :: (MonadIO m, MonadWriter Text m, MonadCont m) => PendingDebt -> m Turtle.Line
   serviceDebt (PendingDebt debtor cost) = callCC $ \exit -> do
     maybeApiKey <-
-      readMaybe . toString . T.strip . decodeUtf8
+      readMaybe
+        . toString
+        . T.strip
+        . decodeUtf8
         <$> readFileBS "/Users/grzesiek/Code/findata/debt-collector/splitwise-api-key.txt"
     apiKey <-
       maybe
@@ -87,6 +91,8 @@ checkAndCollectDebt line = callCC $ \exit -> do
 
 main :: IO ()
 main = do
+  -- My wallet and most of my files are in UTF-8, so make sure it's used.
+  setLocaleEncoding utf8
   Turtle.update checkAndCollectDebtSh "/Users/grzesiek/wallet/wallet.txt"
  where
   checkAndCollectDebtSh :: Turtle.Shell Turtle.Line -> Turtle.Shell Turtle.Line
