@@ -1,69 +1,52 @@
-name:                debt-collector
-version:             0.1.0.0
-github:              "gregorias/debt-collector"
-license:             AGPL-3
-author:              "Grzegorz Milka"
-maintainer:          "grzegorzmilka@gmail.com"
-copyright:           "Copyright (c) 2022 Grzegorz Milka"
+name: debt-collector
+version: 0.1.0.0
+github: "gregorias/debt-collector"
+license: AGPL-3
+author: "Grzegorz Milka"
+maintainer: "grzegorzmilka@gmail.com"
+copyright: "Copyright (c) 2022-23 Grzegorz Milka"
 
 extra-source-files:
-- README.md
+  - README.md
 
 # Metadata used when publishing your package
 # synopsis:            Short description of your package
-# category:            Web
+category: Finance
 
 # To avoid duplicated efforts in documentation and dealing with the
 # complications of embedding Haddock markup inside cabal files, it is
 # common to point users to the README.md file.
-description:         Please see the README on GitHub at <https://github.com/gregorias/debt-collector#readme>
+description: Please see the README on GitHub at <https://github.com/gregorias/debt-collector#readme>
+
+language: GHC2021
 
 # Some defaults recommended by https://kowainik.github.io/posts/2019-02-06-style-guide#default-extensions
 # Also use Relude
 default-extensions:
-  BangPatterns
-  DataKinds
-  DeriveDataTypeable
-  DeriveFoldable
-  DeriveFunctor
-  DeriveGeneric
-  DeriveTraversable
-  DerivingStrategies
-  DerivingVia
-  DuplicateRecordFields
-  FlexibleContexts
-  FlexibleInstances
-  FunctionalDependencies
-  GADTs
-  GeneralisedNewtypeDeriving
-  InstanceSigs
-  LambdaCase
-  MultiParamTypeClasses
-  MultiWayIf
-  NoImplicitPrelude
-  NumericUnderscores
-  OverloadedLabels
-  OverloadedLists
-  OverloadedStrings
-  PatternSynonyms
-  QuasiQuotes
-  ScopedTypeVariables
-  StandaloneDeriving
-  TupleSections
-  TypeApplications
-  TypeFamilies
-  TypeOperators
-  UnicodeSyntax
-  ViewPatterns
-
-dependencies:
-- base >= 4.13 && < 5
-- relude
+  - DataKinds
+  - DerivingStrategies
+  - DerivingVia
+  - DuplicateRecordFields
+  - FunctionalDependencies
+  - GADTs
+  - LambdaCase
+  - MultiWayIf
+  - NoImplicitPrelude
+  - OverloadedLabels
+  - OverloadedStrings
+  - QuasiQuotes
+  - TypeFamilies
+  - TypeOperators
 
 # no-type-defaults, this is dangerous, but in terms of convenience it's so
 # useful to use ExtendedDefaultRules that I keep it.
+#
+# no-name-shadowing: Name shadowing is potentially dangerous, but not having it
+# forces me to figure out alternative names, which can make code less readable.
+# Overall, I think it's worth the trade off to enable name shadowing.
 ghc-options:
   - -Wall
+  - -Werror
   - -Wcompat
   - -Wmissing-deriving-strategies
   - -Widentities
@@ -74,42 +57,47 @@ ghc-options:
   - -Wredundant-constraints
   - -Wno-type-defaults
   - -Wno-partial-type-signatures
+  - -Wno-name-shadowing
+
+dependencies:
+  - base >= 4.17 && < 5
+  - relude
 
 library:
   source-dirs: src
   ghc-options:
-  - -Wunused-packages
+    - -Wunused-packages
   dependencies:
-  - currency-codes
-  - Decimal
-  - megaparsec
-  - mtl
-  - parser-combinators
-  - regex-compat
-  - turtle
+    - currency-codes
+    - Decimal
+    - megaparsec
+    - mtl
+    - parser-combinators
+    - regex-compat
+    - turtle
 
 executables:
   debt-collector:
-    main:                Main.hs
-    source-dirs:         app
+    main: Main.hs
+    source-dirs: app
     ghc-options:
-    - -threaded
-    - -rtsopts
-    - -with-rtsopts=-N
-    - -Wunused-packages
+      - -threaded
+      - -rtsopts
+      - -with-rtsopts=-N
+      - -Wunused-packages
     dependencies:
-    - debt-collector
+      - debt-collector
     # Fix https://stackoverflow.com/questions/67519851/multiple-files-use-the-same-module-name
     when:
-    - condition: false
-      other-modules: Paths_debt-collector
+      - condition: false
+        other-modules: Paths_debt-collector
 
 tests:
   debt-collector-test:
-    main:                Main.hs
-    source-dirs:         test
+    main: Main.hs
+    source-dirs: test
     ghc-options:
-    - -threaded
-    - -rtsopts
-    - -with-rtsopts=-N
-    - -Wunused-packages
+      - -threaded
+      - -rtsopts
+      - -with-rtsopts=-N
+      - -Wunused-packages
